@@ -36,26 +36,15 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
+from .equation_refactor import EquationRefactor
+
+refactors = [EquationRefactor()]
 
 
-from file_utils import Inplace
-from line_refactor import refactor_line
-
-
-def refactor_file(file_name, bak):
-    with Inplace(file_name, bak) as f:
-        for l in f:
-            tmp = refactor_line(l)
-            f.write(tmp)
-
-
-def main():
-    refactor_file('test.txt', 'bak')
-
-
-if __name__ == '__main__':
-    main()
-
+def refactor_line(line):
+    for r in refactors:
+        line = r.refactor(line)
+    return line
 
 
 

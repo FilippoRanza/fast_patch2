@@ -37,25 +37,40 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import re
 
-from file_utils import Inplace
-from line_refactor import refactor_line
+_begin_regex_ = re.compile(r'\\begin\{(align|equation)\*?\}')
+_end_regex_ = re.compile(r'\\end\{(align|equation)\*?\}')
 
-
-def refactor_file(file_name, bak):
-    with Inplace(file_name, bak) as f:
-        for l in f:
-            tmp = refactor_line(l)
-            f.write(tmp)
-
-
-def main():
-    refactor_file('test.txt', 'bak')
+_parenthesis_refactor_ = [(re.compile(r'(\\left)?\('), r'\\left('),
+                          (re.compile(r'(\\left)?\['), r'\\left['),
+                          (re.compile(r'(\\right)?\)'), r'\\right)'),
+                          (re.compile(r'(\\right)?\]'), r'\\right]')]
 
 
-if __name__ == '__main__':
-    main()
+class EquationRefactor:
 
+    def __init__(self):
+        self.run = False
+
+    @staticmethod
+    def _refactor_(line):
+        for r, s in _parenthesis_refactor_:
+            line = r.sub(s, line)
+        return line
+
+    def refactor(self, line):
+
+        if _end_regex_.search(line):
+            self.run = False
+
+        if self.run:
+            line = self._refactor_(line)
+
+        if _begin_regex_.search(line):
+            self.run = True
+
+        return line
 
 
 

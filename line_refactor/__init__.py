@@ -38,24 +38,6 @@
 #
 
 
-from file_utils import Inplace
-from line_refactor import refactor_line
-
-
-def refactor_file(file_name, bak):
-    with Inplace(file_name, bak) as f:
-        for l in f:
-            tmp = refactor_line(l)
-            f.write(tmp)
-
-
-def main():
-    refactor_file('test.txt', 'bak')
-
-
-if __name__ == '__main__':
-    main()
-
-
+from .line_processor import refactor_line
 
 
