@@ -20,7 +20,8 @@
 #
 
 #
-#  fast_patch - Automatically refactor Latex code
+#  fast_patch2 - Automatically refactor Latex code
+#
 #
 #
 #  This program is free software; you can redistribute it and/or modify

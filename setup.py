@@ -1,3 +1,5 @@
+#! /usr/bin/python
+
 #
 #  fast_patch - Automatically refactor Latex code
 #

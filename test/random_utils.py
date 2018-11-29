@@ -1,6 +1,5 @@
 #! /usr/bin/python
 
-
 #
 #  fast_patch - Automatically refactor Latex code
 #
@@ -19,7 +18,6 @@
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-
 
 #
 #  fast_patch2 - Automatically refactor Latex code
