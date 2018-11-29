@@ -1,6 +1,5 @@
 #! /usr/bin/python
 
-
 #
 #  fast_patch - Automatically refactor Latex code
 #
@@ -20,9 +19,8 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-
 #
-#  fast_patch2 - Automatically refactor Latex code
+#  fast_patch - Automatically refactor Latex code
 #
 #
 #  This program is free software; you can redistribute it and/or modify
@@ -39,59 +37,55 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+from random import choice
 
-import random
-rnd = random.SystemRandom()
-
-DEF_MAX_LEN = 64
-DEF_MIN_LEN = 4
-
-chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
-         'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-         'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
-         'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F',
-         'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-         'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
-         'W', 'X', 'Y', 'Z', '0', '1', '2', '3',
-         '4', '5', '6', '7', '8', '9', '_', '-']
-
-rnd.shuffle(chars)
-len_chars = len(chars)
+from line_refactor.auto_label import get_supported_words, AutoLabel
+from .random_utils import *
 
 
-def rand_int(a, b=None):
-    if b is None:
-        b = a
-        a = 0
-    return rnd.randint(a, b)
+def random_header(name):
+    a, b = rand_surround()
+    t = choice(get_supported_words())
+    return f'{a}\\{t}{{{name}}}{b}'
 
 
-def _mk_rnd_str_(sz):
-    out = ''
-    for i in range(sz):
-        tmp = rand_int(len_chars - 1)
-        out += chars[tmp]
-    return out
+def case_no_op(auto: AutoLabel):
+    line = rand_str()
+    assert auto.refactor(line) == line
+    assert auto.prev is None
 
 
-def rand_str(sz=None):
-    if sz is None:
-        sz = rand_int(DEF_MIN_LEN, DEF_MAX_LEN)
-    return _mk_rnd_str_(sz)
+def case_add_label(auto: AutoLabel):
+    name = rand_str()
+    line = rand_str()
+
+    curr = random_header(name)
+    assert curr == auto.refactor(curr)
+    assert auto.prev is not None
+
+    curr = auto.refactor(line)
+    label, tmp = curr.split('\n')
+    assert auto.prev is None
+    assert tmp == line
 
 
-def rand_state(c):
-    a = rnd.random()
-    j = 1 / c
-    state = j
-    for i in range(c):
-        if a < state:
-            return i
-        state += j
-    return c - 1
+def case_no_add_label(auto: AutoLabel):
+    name = rand_str()
+    line = f'\\label{{{rand_str()}}}'
+
+    curr = random_header(name)
+    assert curr == auto.refactor(curr)
+    assert auto.prev is not None
+
+    curr = auto.refactor(line)
+    assert auto.prev is None
+    assert curr == line
 
 
-def rand_surround(n=10):
-    a = ' ' * rand_int(n)
-    b = ' ' * rand_int(n)
-    return a, b
+def test():
+    auto = AutoLabel()
+    for i in range(10000):
+        t = choice([case_add_label, case_no_add_label, case_no_op])
+        t(auto)
+
+

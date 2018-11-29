@@ -3,6 +3,7 @@
 *bak
 .idea/
 file_utils/__pycache__/
+line_refactor/__pycache__/*
 .pytest_cache/
 
 

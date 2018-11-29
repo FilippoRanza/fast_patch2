@@ -1,6 +1,5 @@
 #! /usr/bin/python
 
-
 #
 #  fast_patch - Automatically refactor Latex code
 #
@@ -20,7 +19,6 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-
 #
 #  fast_patch2 - Automatically refactor Latex code
 #
@@ -39,59 +37,47 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import re
 
-import random
-rnd = random.SystemRandom()
+_label_ = re.compile(r'\\label{.+}')
 
-DEF_MAX_LEN = 64
-DEF_MIN_LEN = 4
+_blocks_ = re.compile(r'\s*\\(?:sub)*(section|chapter)\{(.+)\}\s*')
 
-chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h',
-         'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-         'q', 'r', 's', 't', 'u', 'v', 'w', 'x',
-         'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F',
-         'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-         'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
-         'W', 'X', 'Y', 'Z', '0', '1', '2', '3',
-         '4', '5', '6', '7', '8', '9', '_', '-']
-
-rnd.shuffle(chars)
-len_chars = len(chars)
+_type_ = {
+    'section': 'sec',
+    'chapter': 'ch'
+}
 
 
-def rand_int(a, b=None):
-    if b is None:
-        b = a
-        a = 0
-    return rnd.randint(a, b)
+def get_supported_words():
+    return list(_type_.keys())
 
 
-def _mk_rnd_str_(sz):
-    out = ''
-    for i in range(sz):
-        tmp = rand_int(len_chars - 1)
-        out += chars[tmp]
-    return out
+class AutoLabel:
 
+    def __init__(self):
+        self.prev = None
 
-def rand_str(sz=None):
-    if sz is None:
-        sz = rand_int(DEF_MIN_LEN, DEF_MAX_LEN)
-    return _mk_rnd_str_(sz)
+    def reset(self):
+        self.prev = None
 
+    def _add_label_(self, line):
+        if _label_.match(line):
+            return line
+        tmp = f'\\label{{{self.prev}}}'
+        return '\n'.join((tmp, line))
 
-def rand_state(c):
-    a = rnd.random()
-    j = 1 / c
-    state = j
-    for i in range(c):
-        if a < state:
-            return i
-        state += j
-    return c - 1
+    def _get_label_(self, line):
+        m = _blocks_.match(line)
+        if m:
+            t, n = m.groups()
+            self.prev = f'{_type_[t]}:{n}'
 
+    def refactor(self, line):
+        if self.prev:
+            line = self._add_label_(line)
+            self.prev = None
+        else:
+            self._get_label_(line)
+        return line
 
-def rand_surround(n=10):
-    a = ' ' * rand_int(n)
-    b = ' ' * rand_int(n)
-    return a, b
