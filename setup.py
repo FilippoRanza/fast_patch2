@@ -1,7 +1,25 @@
 #
+#  fast_patch - Automatically refactor Latex code
+#
+#  Copyright (c) 2018 Filippo Ranza <filipporanza@gmail.com>
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 3 of the License, or
+#  (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+#
 #  fast_patch2 - Automatically refactor Latex code
 #
-#   Copyright (c) 2018 Filippo Ranza <filipporanza@gmail.com>
 #
 #  This program is free software; you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -18,10 +36,12 @@
 #
 #
 
-import sys
+from sys import version_info
+
 from setuptools import setup
+
 # you can't install with python2
-assert sys.version_info.major == 3 and sys.version_info.minor >= 6, 'theme_changer.py needs python3.6 or greater'
+assert version_info >= (3, 6), 'fast_patch2 needs python 3.6 or greater'
 
 
 setup(
