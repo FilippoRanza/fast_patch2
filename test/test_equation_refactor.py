@@ -48,13 +48,19 @@ def make_line():
 
 
 def make_rnd_block(name):
-    n = random.choice(['equation', 'align'])
+    if rand_state(2):
+        n = random.choice(['equation', 'align'])
+        change = True
+    else:
+        n = rand_str()
+        change = False
+
     n += random.choice(['', '*'])
 
     head = ' ' * rand_int(5)
     tail = ' ' * rand_int(5)
 
-    return f'{head}\\{name}{{{n}}}{tail}'
+    return f'{head}\\{name}{{{n}}}{tail}', change
 
 
 def make_rnd_begin():
@@ -79,10 +85,30 @@ def test_refactor():
             assert corr == equation.refactor(prev)
 
 
+def run_begin(eq: EquationRefactor):
+    line, ch = make_rnd_begin()
+    prev = eq.run
+    eq.refactor(line)
+    if prev:
+        assert eq.run
+    else:
+        assert eq.run == ch
+
+
+def run_end(eq: EquationRefactor):
+    line, ch = make_rnd_end()
+    prev = eq.run
+    eq.refactor(line)
+    if prev:
+        # if ch is True then line contains a correct end statement
+        assert eq.run != ch
+    else:
+        assert not eq.run
+
+
 def test_block():
     equation = EquationRefactor()
     for i in range(10000):
+        f = random.choice([run_begin, run_end])
+        f(equation)
 
-        f, s = random.choice([(make_rnd_begin, True), (make_rnd_end, False)])
-        equation.refactor(f())
-        assert equation.run == s
