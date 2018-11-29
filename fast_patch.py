@@ -20,7 +20,6 @@
 #
 
 
-
 from file_utils import Inplace
 from line_refactor import refactor_line, reset_refactor
 
