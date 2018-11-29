@@ -18,7 +18,11 @@
 #
 #
 
+import sys
 from setuptools import setup
+# you can't install with python2
+assert sys.version_info.major == 3 and sys.version_info.minor >= 6, 'theme_changer.py needs python3.6 or greater'
+
 
 setup(
     name='fast_patch2',
