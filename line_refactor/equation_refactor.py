@@ -37,12 +37,25 @@ def refactor_parenthesis(match):
     return f'{o}{p}'
 
 
-_equation_refactor_ = [(re.compile(r'(\\left|\\right)?(\(|\)|\[|\])'), refactor_parenthesis)]
+def refactor_norm(match):
+    b, t, c = match.groups()
+    if t:
+        out = f'\\norm{{{c}}}'
+    else:
+        out = f'\\abs{{{c}}}'
+    return out
+
+
+_equation_refactor_ = [(re.compile(r'(\\left|\\right)?(\(|\)|\[|\])'), refactor_parenthesis),
+                       (re.compile(r'((\\)?\|)([^\|]+)\|'), refactor_norm)]
 
 
 class EquationRefactor:
 
     def __init__(self):
+        self.run = False
+
+    def reset(self):
         self.run = False
 
     @staticmethod

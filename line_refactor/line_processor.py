@@ -19,16 +19,30 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-
+from re import compile
 from .equation_refactor import EquationRefactor
+from .indentation_refactor import IndentationRefactor
 
-refactors = [EquationRefactor()]
+comment = compile(r'^\s*%.*')
+refactors = [EquationRefactor(), IndentationRefactor()]
 
 
 def refactor_line(line):
+
+    # ignore comments
+    if comment.match(line):
+        return line
+
     for r in refactors:
         line = r.refactor(line)
     return line
+
+
+def reset_refactor():
+    for r in refactors:
+        r.reset()
+
+
 
 
 
