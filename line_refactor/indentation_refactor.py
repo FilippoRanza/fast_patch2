@@ -22,8 +22,8 @@
 
 import re
 
-_begin_regex_ = re.compile(r'\\begin\{.+\}')
-_end_regex_ = re.compile(r'\\end\{.+\}')
+_begin_regex_ = re.compile(r'\s*\\begin\{.+\}\s*')
+_end_regex_ = re.compile(r'\s*\\end\{.+\}\s*')
 
 
 class IndentationRefactor:
@@ -43,7 +43,7 @@ class IndentationRefactor:
         if self.count:
             line = self.indent*self.count + line.lstrip()
 
-        elif _begin_regex_.search(line):
+        if _begin_regex_.search(line):
             self.count += 1
 
         return line

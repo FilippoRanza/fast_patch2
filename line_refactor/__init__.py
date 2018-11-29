@@ -20,6 +20,6 @@
 #
 
 
-from .line_processor import refactor_line, refactors
+from .line_processor import refactor_line, reset_refactor
 
 
