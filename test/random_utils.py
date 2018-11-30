@@ -93,3 +93,8 @@ def rand_surround(n=10):
     a = ' ' * rand_int(n)
     b = ' ' * rand_int(n)
     return a, b
+
+
+def rand_bool():
+    # random return number from 0,inclusive, to 1 exclusive
+    return random.random() < 0.5

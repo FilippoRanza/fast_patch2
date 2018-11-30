@@ -23,16 +23,13 @@ from os import scandir
 
 
 def find_files(path='.', ext='tex'):
-    out = []
     for e in scandir(path):
-
         if e.is_dir():
-            out += find_files(e.path, ext)
+            find_files(e.path, ext)
         else:
             if e.path.endswith(ext):
-                out.append(e.path)
+                yield e.path
 
-    return out
 
 
 
