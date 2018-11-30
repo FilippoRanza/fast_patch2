@@ -23,6 +23,8 @@ from sys import version_info
 
 from setuptools import setup
 
+from find_script import find_script
+
 # you can't install with python2
 assert version_info >= (3, 6), 'fast_patch2 needs python 3.6 or greater'
 
@@ -36,5 +38,5 @@ setup(
     author='Filippo Ranza',
     author_email='filipporanza@gmail.com',
     description='Automatically refactor Latex code',
-    scripts=['fast_patch.py']
+    scripts=find_script()
 )

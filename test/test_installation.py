@@ -24,21 +24,27 @@ check that the installation script works properly
 
 from subprocess import call
 
-name = 'fast_patch.py'
+from find_script import find_script
+
+_ERROR_ = -1
+
+
+def check_installation(f):
+    try:
+        a = call(f)
+    except FileNotFoundError:
+        print(f, 'not found')
+        a = _ERROR_
+    except PermissionError:
+        print(f, 'is not executable')
+        a = _ERROR_
+
+    return a
 
 
 def test():
-    try:
-        a = call(name)
-    except FileNotFoundError:
-        print(name, 'not found')
-        a = -1
-    except PermissionError:
-        print(name, 'is not executable')
-        a = -1
-
-    # script execution will fail: the system is not configured
-    assert a != -1
+    for f in find_script():
+        assert check_installation(f) != _ERROR_
 
 
 

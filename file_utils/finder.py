@@ -22,9 +22,9 @@
 from os import scandir
 
 
-def find_files(path='.', ext='tex'):
+def find_files(path='.', ext='tex', recursive=True):
     for e in scandir(path):
-        if e.is_dir():
+        if e.is_dir() and recursive:
             find_files(e.path, ext)
         else:
             if e.path.endswith(ext):
