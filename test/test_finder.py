@@ -27,12 +27,13 @@ then search them using finder
 """
 
 
-from .random_utils import *
-from random import choice
 import os
 from os import path
+from random import choice
 from tempfile import mkdtemp
+
 from file_utils import find_files
+from .random_utils import *
 
 
 class MakeRandFileTree:
@@ -77,6 +78,7 @@ class MakeRandFileTree:
 
 
 def test():
+    curr = os.getcwd()
     new_dir = mkdtemp()
     os.chdir(new_dir)
     # base is set just to force a full qualified name
@@ -93,8 +95,8 @@ def test():
             assert v
         else:
             assert not v
-
-
+    # restore previous Working directory
+    os.chdir(curr)
 
 
 
