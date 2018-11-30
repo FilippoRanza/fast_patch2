@@ -40,9 +40,15 @@ def init_arg_parse():
     return parse
 
 
-def run_config(args):
+def run_config(parse):
+
+    args = parse.parse_args()
+
     if args.auto:
         args.file = find_files()
+    elif args.file is None:
+        parse.print_help()
+        args.file = []
 
     return args
 
@@ -59,7 +65,7 @@ def refactor_file(file_name, bak):
 def main():
     # refactor_file('test.tex', 'bak')
     parse = init_arg_parse()
-    args = run_config(parse.parse_args())
+    args = run_config(parse)
     for f in args.file:
         refactor_file(f, 'bak')
 
