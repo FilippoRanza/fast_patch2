@@ -26,26 +26,31 @@ from .auto_label import AutoLabel
 from .equation_refactor import EquationRefactor
 from .indentation_refactor import IndentationRefactor
 
-comment = compile(r'^\s*%.*')
-refactors = [EquationRefactor(),  AutoLabel(), IndentationRefactor()]
 
+class LineRefactor:
+    def __init__(self, **kwargs):
+        self.cmt = compile(r'^\s*%.*')
+        self.r = [EquationRefactor(), IndentationRefactor()]
+        if kwargs.get('label'):
+            self._add_refactor_(AutoLabel())
 
-def refactor_line(line):
+    def _add_refactor_(self, obj):
+        # insert in the second-last position
+        tmp = len(self.r) - 1
+        self.r.insert(tmp, obj)
 
-    # ignore empty lines and comments
-    if not line or comment.match(line):
+    def refactor_line(self, line):
+
+        # ignore empty lines and comments
+        if not line or self.cmt.match(line):
+            return line
+
+        for r in self.r:
+            line = r.refactor(line)
         return line
 
-    for r in refactors:
-        line = r.refactor(line)
-    return line
-
-
-def reset_refactor():
-    for r in refactors:
-        r.reset()
-
-
-
+    def reset(self):
+        for r in self.r:
+            r.reset()
 
 

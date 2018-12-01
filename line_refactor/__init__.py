@@ -20,5 +20,5 @@
 #
 
 
-from .line_processor import refactor_line, reset_refactor
+from .line_processor import LineRefactor
 

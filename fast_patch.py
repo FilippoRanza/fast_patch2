@@ -20,15 +20,16 @@
 #
 
 
-from file_utils import Inplace, find_files
-from line_refactor import refactor_line, reset_refactor
 from argparse import ArgumentParser
+
+from file_utils import Inplace, find_files
+from line_refactor import LineRefactor
 
 
 def init_arg_parse():
     parse = ArgumentParser()
-    # parse.add_argument('-l', '--label', default=False, action='store_true',
-    #                   help='Automatically add label under section and chapter, when a label is missing')
+    parse.add_argument('-l', '--label', default=False, action='store_true',
+                       help='Automatically add label under section and chapter, when a label is missing')
 
     group = parse.add_argument_group().add_mutually_exclusive_group()
     group.add_argument('-a', '--auto', action='store_true',
@@ -53,21 +54,27 @@ def run_config(parse):
     return args
 
 
-def refactor_file(file_name, bak):
+def refactor_file(refactor, file_name, bak):
     with Inplace(file_name, bak) as f:
         for l in f:
-            tmp = refactor_line(l)
+            tmp = refactor.refactor_line(l)
             f.write(tmp)
 
-    reset_refactor()
+    refactor.reset()
+
+
+def refactor_files(args, bak='bak'):
+    refactor = LineRefactor(label=args.label)
+    for f in args.file:
+        refactor_file(refactor, f, bak)
+    refactor.reset()
 
 
 def main():
     # refactor_file('test.tex', 'bak')
     parse = init_arg_parse()
     args = run_config(parse)
-    for f in args.file:
-        refactor_file(f, 'bak')
+    refactor_files(args)
 
 
 if __name__ == '__main__':
