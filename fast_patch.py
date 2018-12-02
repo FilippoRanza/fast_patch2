@@ -38,6 +38,9 @@ def init_arg_parse():
     group.add_argument('-f', '--file', nargs='+', type=str,
                        help='Input file to refactor')
 
+    parse.add_argument('-r', '--ref', default=False, action='store_true',
+                       help='Automatically add reference to previous chapter and section, when a reference is missing')
+
     return parse
 
 
@@ -64,7 +67,7 @@ def refactor_file(refactor, file_name, bak):
 
 
 def refactor_files(args, bak='bak'):
-    refactor = LineRefactor(label=args.label)
+    refactor = LineRefactor(label=args.label, ref=args.ref)
     for f in args.file:
         refactor_file(refactor, f, bak)
     refactor.reset()

@@ -23,6 +23,7 @@
 from re import compile
 
 from .auto_label import AutoLabel
+from .auto_reference import AutoReference
 from .equation_refactor import EquationRefactor
 from .indentation_refactor import IndentationRefactor
 
@@ -33,6 +34,9 @@ class LineRefactor:
         self.r = [EquationRefactor(), IndentationRefactor()]
         if kwargs.get('label'):
             self._add_refactor_(AutoLabel())
+
+        if kwargs.get('ref'):
+            self._add_refactor_(AutoReference())
 
     def _add_refactor_(self, obj):
         # insert in the second-last position

@@ -1,5 +1,3 @@
-#! /usr/bin/python
-
 #
 #  fast_patch2 - Automatically refactor Latex code
 #
@@ -19,38 +17,20 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
-from ._common_ import *
+"""
+This file contains some common
+regex and function to other line refactors
+"""
 
 
-def get_supported_words():
-    return list(type_key.keys())
+import re
+
+label_re = re.compile(r'\\label{.+}')
+
+blocks_re = re.compile(r'\s*\\(?:sub)*(section|chapter)\{(.+)\}\s*')
 
 
-class AutoLabel:
-
-    def __init__(self):
-        self.prev = None
-
-    def reset(self):
-        self.prev = None
-
-    def _add_label_(self, line):
-        if label_re.match(line):
-            return line
-        tmp = f'\\label{{{self.prev}}}'
-        return '\n'.join((tmp, line))
-
-    def _get_label_(self, line):
-        m = blocks_re.match(line)
-        if m:
-            t, n = m.groups()
-            self.prev = f'{type_key[t]}:{n}'
-
-    def refactor(self, line):
-        if self.prev:
-            line = self._add_label_(line)
-            self.prev = None
-        else:
-            self._get_label_(line)
-        return line
-
+type_key = {
+    'section': 'sec',
+    'chapter': 'ch'
+}

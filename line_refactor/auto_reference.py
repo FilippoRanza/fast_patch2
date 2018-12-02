@@ -1,5 +1,3 @@
-#! /usr/bin/python
-
 #
 #  fast_patch2 - Automatically refactor Latex code
 #
@@ -19,38 +17,38 @@
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
 
+import re
+
 from ._common_ import *
 
-
-def get_supported_words():
-    return list(type_key.keys())
+ref_re = re.compile('')
 
 
-class AutoLabel:
+class AutoReference:
 
     def __init__(self):
-        self.prev = None
+        self.ref = {}
 
     def reset(self):
-        self.prev = None
+        self.ref.clear()
 
-    def _add_label_(self, line):
-        if label_re.match(line):
-            return line
-        tmp = f'\\label{{{self.prev}}}'
-        return '\n'.join((tmp, line))
+    def _store_token_(self, match):
+        t, v = match.groups()
+        tmp_k = re.compile(f'(?P<ref>{re.escape(v)})', re.IGNORECASE)
+        tmp_v = f'\\g<ref>\\\\ref{{{type_key[t]}:{v}}}'
+        self.ref[tmp_k] = tmp_v
 
-    def _get_label_(self, line):
+    def _add_ref_(self, line):
+        for k, v in self.ref.items():
+            line = k.sub(v, line)
+        return line
+
+    def refactor(self, line: str):
         m = blocks_re.match(line)
         if m:
-            t, n = m.groups()
-            self.prev = f'{type_key[t]}:{n}'
+            self._store_token_(m)
+        elif line.find('ref') == -1:
+            line = self._add_ref_(line)
 
-    def refactor(self, line):
-        if self.prev:
-            line = self._add_label_(line)
-            self.prev = None
-        else:
-            self._get_label_(line)
         return line
 
